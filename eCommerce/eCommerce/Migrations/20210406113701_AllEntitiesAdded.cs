@@ -87,7 +87,7 @@ namespace eCommerce.Migrations
                     ProductName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     Description = table.Column<string>(type: "varchar(120)", unicode: false, maxLength: 120, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    PictureUrl = table.Column<string>(type: "varchar(120)", unicode: false, maxLength: 120, nullable: true),
+                    coverImagePath = table.Column<string>(type: "varchar(120)", unicode: false, maxLength: 120, nullable: true),
                     Category = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false)
                 },
                 constraints: table =>

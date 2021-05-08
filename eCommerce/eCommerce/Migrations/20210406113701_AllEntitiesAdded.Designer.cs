@@ -155,7 +155,7 @@ namespace eCommerce.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(120)");
 
-                    b.Property<string>("PictureUrl")
+                    b.Property<string>("coverImagePath")
                         .HasMaxLength(120)
                         .IsUnicode(false)
                         .HasColumnType("varchar(120)");

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace eCommerce.DataAccess
 {
@@ -29,45 +30,33 @@ namespace eCommerce.DataAccess
             }
         }
 
-        public int AddProduct(Product product)
-        {
-            try
-            {
-                _dbContext.Product.Add(product);
-                _dbContext.SaveChanges();
 
-                return 1;
-            }
-            catch
+        public async Task<int> AddProduct(Product product)
+        {
+            if (_dbContext != null)
             {
-                throw;
+                await _dbContext.Product.AddAsync(product);
+                await _dbContext.SaveChangesAsync();
+
+                return product.ProductId;
+            }
+
+            return 0;
+        }
+
+        public async Task UpdateProduct(Product product)
+        {
+            if (_dbContext != null)
+            {
+                //Delete that productt
+                _dbContext.Product.Update(product);
+
+                //Commit the transaction
+                await _dbContext.SaveChangesAsync();
             }
         }
 
-        public int UpdateProduct(Product product)
-        {
-            try
-            {
-                Product oldProductData = GetProductData(product.ProductId);
-
-                if (oldProductData.ProductName != null)
-                {
-                    if (product.ProductName == null)
-                    {
-                        product.ProductName = oldProductData.ProductName;
-                    }
-                }
-
-                _dbContext.Entry(product).State = EntityState.Modified;
-                _dbContext.SaveChanges();
-
-                return 1;
-            }
-            catch
-            {
-                throw;
-            }
-        }
+ 
 
         public Product GetProductData(int productId)
         {
@@ -87,20 +76,28 @@ namespace eCommerce.DataAccess
             }
         }
 
-        public string DeleteProduct(int productId)
+ 
+         public async Task<int> DeleteProduct(int productId)
         {
-            try
-            {
-                Product product = _dbContext.Product.Find(productId);
-                _dbContext.Product.Remove(product);
-                _dbContext.SaveChanges();
+            int result = 0;
 
-                return (product.ProductName);
-            }
-            catch
+            if (_dbContext != null)
             {
-                throw;
+                //Find the post for specific product id
+                var product = await _dbContext.Product.FirstOrDefaultAsync(x => x.ProductId == productId);
+
+                if (product != null)
+                {
+                    //Delete that product
+                    _dbContext.Product.Remove(product);
+
+                    //Commit the transaction
+                    result = await _dbContext.SaveChangesAsync();
+                }
+                return result;
             }
+
+            return result;
         }
 
         public List<Categories> GetCategories()
@@ -168,5 +165,7 @@ namespace eCommerce.DataAccess
                 throw;
             }
         }
+
+
     }
 }

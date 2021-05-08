@@ -4,6 +4,7 @@ using eCommerce.Dto;
 using eCommerce.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using eCommerce.Models;
 
 namespace eCommerce.Controllers
 {
@@ -12,6 +13,7 @@ namespace eCommerce.Controllers
     public class OrderController : Controller
     {
         readonly IOrderService _orderService;
+        
 
         public OrderController(IOrderService orderService)
         {
@@ -26,7 +28,12 @@ namespace eCommerce.Controllers
         [HttpGet("{userId}")]
         public async Task<List<OrdersDto>> Get(int userId)
         {
-            return await Task.FromResult(_orderService.GetOrderList(userId)).ConfigureAwait(true) ;
+            
+            return await Task.FromResult(_orderService.GetOrderList(userId)).ConfigureAwait(true);
+
         }
+
+
+        
     }
 }

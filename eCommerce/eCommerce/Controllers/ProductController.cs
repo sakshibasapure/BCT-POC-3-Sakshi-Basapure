@@ -79,83 +79,95 @@ namespace eCommerce.Controllers
         /// <returns></returns>
         [HttpPost, DisableRequestSizeLimit]
         [Authorize(Policy = UserRoles.Admin)]
-        public int Post()
+        public async Task<IActionResult> AddProdct([FromBody] Product model)
         {
-            Product product = JsonConvert.DeserializeObject<Product>(Request.Form["productFormData"].ToString());
-
-            if (Request.Form.Files.Count > 0)
+            if (ModelState.IsValid)
             {
-                var file = Request.Form.Files[0];
-
-                if (file.Length > 0)
+                try
                 {
-                    string fileName = Guid.NewGuid() + ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    string fullPath = Path.Combine(coverImageFolderPath, fileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    var postId = await _productService.AddProduct(model);
+                    if (postId > 0)
                     {
-                        file.CopyTo(stream);
+                        return Ok(postId);
                     }
-                    product.ProductName = fileName;
+                    else
+                    {
+                        return NotFound();
+                    }
                 }
+                catch (Exception)
+                {
+
+                    return BadRequest();
+                }
+
             }
-            else
-            {
-                product.ProductName = _config["DefaultProductFile"];
-            }
-            return _productService.AddProduct(product);
+
+            return BadRequest();
         }
 
-        /// <summary>
-        /// Update a particular product record
-        /// </summary>
-        /// <returns></returns>
+        // <summary>
+        // Update a particular product record
+        // </summary>
+        // <returns></returns>
         [HttpPut]
         [Authorize(Policy = UserRoles.Admin)]
-        public int Put()
+        public async Task<IActionResult> UpdateProduct([FromBody] Product model)
         {
-            Product product = JsonConvert.DeserializeObject<Product>(Request.Form["productFormData"].ToString());
-            if (Request.Form.Files.Count > 0)
+            if (ModelState.IsValid)
             {
-                var file = Request.Form.Files[0];
-
-                if (file.Length > 0)
+                try
                 {
-                    string fileName = Guid.NewGuid() + ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    string fullPath = Path.Combine(coverImageFolderPath, fileName);
-                    bool isFileExists = Directory.Exists(fullPath);
+                    await _productService.UpdateProduct(model);
 
-                    if (!isFileExists)
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType().FullName ==
+                             "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException")
                     {
-                        using (var stream = new FileStream(fullPath, FileMode.Create))
-                        {
-                            file.CopyTo(stream);
-                        }
-                        product.ProductName = fileName;
+                        return NotFound();
                     }
+
+                    return BadRequest();
                 }
             }
-            return _productService.UpdateProduct(product);
+
+            return BadRequest();
         }
 
         /// <summary>
         /// Delete a particular product record
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{productId}")]
         [Authorize(Policy = UserRoles.Admin)]
-        public int Delete(int id)
+        public async Task<IActionResult> DeleteProduct(int productId)
         {
-            string ProductName = _productService.DeleteProduct(id);
-            if (ProductName != _config["DefaultProductFile"])
+            int result = 0;
+
+           /* if (productId == null)
             {
-                string fullPath = Path.Combine(coverImageFolderPath, ProductName);
-                if (System.IO.File.Exists(fullPath))
+                return BadRequest();
+            }*/
+
+            try
+            {
+                result = await _productService.DeleteProduct(productId);
+                if (result == 0)
                 {
-                    System.IO.File.Delete(fullPath);
+                    return NotFound();
                 }
+                return Ok();
             }
-            return 1;
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
         }
+
     }
 }

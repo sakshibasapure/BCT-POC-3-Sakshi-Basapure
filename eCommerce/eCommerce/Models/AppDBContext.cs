@@ -49,7 +49,7 @@ namespace eCommerce.Models
 
                 entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
 
-                entity.Property(e => e.PictureUrl)
+                entity.Property(e => e.coverImagePath)
                     .HasMaxLength(120)
                     .IsUnicode(false);
             });

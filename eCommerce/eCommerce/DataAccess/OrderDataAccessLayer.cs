@@ -78,11 +78,11 @@ namespace eCommerce.DataAccess
                 {
                     CartItemDto item = new CartItemDto();
 
-                    Product product = new Product
+                    Product product = new Product();
                     {
-                        ProductId = customerOrder.ProductId,
-                        ProductName = _dbContext.Product.FirstOrDefault(x => x.ProductId == customerOrder.ProductId && customerOrder.OrderId == orderid).ProductName,
-                        Price = _dbContext.CustomerOrderDetails.FirstOrDefault(x => x.ProductId == customerOrder.ProductId && customerOrder.OrderId == orderid).Price
+                        product.ProductId = customerOrder.ProductId;
+                        //product.ProductName= product;
+                        product.Price = _dbContext.CustomerOrderDetails.FirstOrDefault(x => x.ProductId == customerOrder.ProductId && customerOrder.OrderId == orderid).Price;
                     };
 
                     item.Product = product;

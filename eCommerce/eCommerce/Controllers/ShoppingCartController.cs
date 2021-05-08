@@ -11,12 +11,12 @@ namespace eCommerce.Controllers
     public class ShoppingCartController : Controller
     {
         readonly ICartService _cartService;
-        readonly IProductService _bookService;
+        readonly IProductService _productService;
 
-        public ShoppingCartController(ICartService cartService, IProductService bookService)
+        public ShoppingCartController(ICartService cartService, IProductService productService)
         {
             _cartService = cartService;
-            _bookService = bookService;
+            _productService = productService;
         }
 
         /// <summary>
@@ -43,20 +43,20 @@ namespace eCommerce.Controllers
         public async Task<List<CartItemDto>> Get(int userId)
         {
             string cartid = _cartService.GetCartId(userId);
-            return await Task.FromResult(_bookService.GetProductsAvailableInCart(cartid)).ConfigureAwait(true) ;
+            return await Task.FromResult(_productService.GetProductsAvailableInCart(cartid)).ConfigureAwait(true) ;
         }
 
         /// <summary>
         /// Add a single item into the shopping cart. If the item already exists, increase the quantity by one
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="bookId"></param>
+        /// <param name="productId"></param>
         /// <returns>Count of items in the shopping cart</returns>
         [HttpPost]
-        [Route("AddToCart/{userId}/{bookId}")]
-        public int Post(int userId, int bookId)
+        [Route("AddToCart/{userId}/{productId}")]
+        public int Post(int userId, int productId)
         {
-            _cartService.AddProductToCart(userId, bookId);
+            _cartService.AddProductToCart(userId, productId);
             return _cartService.GetCartItemCount(userId);
         }
 
@@ -64,12 +64,12 @@ namespace eCommerce.Controllers
         /// Reduces the quantity by one for an item in shopping cart
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="bookId"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
-        [HttpPut("{userId}/{bookId}")]
-        public int Put(int userId, int bookId)
+        [HttpPut("{userId}/{productId}")]
+        public int Put(int userId, int productId)
         {
-            _cartService.DeleteOneCartItem(userId, bookId);
+            _cartService.DeleteOneCartItem(userId, productId);
             return _cartService.GetCartItemCount(userId);
         }
 
@@ -77,12 +77,12 @@ namespace eCommerce.Controllers
         /// Delete a single item from the cart 
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="bookId"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
-        [HttpDelete("{userId}/{bookId}")]
-        public int Delete(int userId, int bookId)
+        [HttpDelete("{userId}/{productId}")]
+        public int Delete(int userId, int productId)
         {
-            _cartService.RemoveCartItem(userId, bookId);
+            _cartService.RemoveCartItem(userId, productId);
             return _cartService.GetCartItemCount(userId);
         }
 
