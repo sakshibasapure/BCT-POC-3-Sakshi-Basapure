@@ -17,7 +17,7 @@ An e-commerce bacend application is created with ASP.NET Core 5.0,using SQL Serv
 4. Put your connection string in appsettings.json file
 5. Enter ```dotnet ef database update``` to load schema in database
 6. Enter ```dotnet run```
-7. Open the URL http://localhost:4200/ to access the application.
+7. Test APIs in Postman with URL https://localhost:5001/
 
  
 
